@@ -123,7 +123,7 @@ function buildGaps(){
     html += '<div class="card gap"><h2>Evidence gap '+i+'</h2>'
       + '<p class="hint">Name the morning finding or implementation experience behind it. Where no supporting evidence has been identified, mark the point as an assumption to check.</p>'
       + '<div class="row"><div><label for="input'+i+'">Morning input<span class="q">Which presentation or experience this came from</span></label>'
-      + '<select id="input'+i+'"><option value="">Select</option><option>Morning input 1</option><option>Morning input 2</option><option>Morning input 3</option><option>Morning input 4</option><option>Implementation experience</option></select></div>'
+      + '<select id="input'+i+'"><option value="">Select</option><option>Evidence 1</option><option>Evidence 2</option><option>Evidence 3</option><option>Evidence 4</option><option>Evidence 5</option></select></div>'
       + '<div><label for="ip'+i+'">IP who could use the evidence<span class="q">Optional</span></label><input type="text" id="ip'+i+'" autocomplete="off"></div></div>'
       + '<div class="grid">';
     for(var c=0;c<COLS.length;c++){
@@ -181,6 +181,13 @@ function collect(){
 function saveDraft(){
   try{ localStorage.setItem("impactlab-draft", JSON.stringify(collect())) }catch(e){}
 }
+// Drafts saved before the options were renamed still carry the old names.
+function renameInput(v){
+  var m = /^Morning input (\d)$/.exec(v);
+  if(m) return "Evidence " + m[1];
+  if(v === "Implementation experience") return "Evidence 5";
+  return v;
+}
 function loadDraft(){
   try{
     var raw = localStorage.getItem("impactlab-draft"); if(!raw) return;
@@ -190,7 +197,7 @@ function loadDraft(){
       var i = r.gap; if(!el("known"+i)) return;
       el("known"+i).value=r.known||""; el("missing"+i).value=r.missing||"";
       el("who"+i).value=r.who||""; el("decision"+i).value=r.decision||"";
-      el("ip"+i).value=r.ip||""; el("input"+i).value=r.input||"";
+      el("ip"+i).value=r.ip||""; el("input"+i).value=renameInput(r.input||"");
       el("assume"+i).checked = r.assumption==="Yes";
     });
     for(var i=1;i<=GAPS;i++){ el("known"+i).dispatchEvent(new Event("input")) }
