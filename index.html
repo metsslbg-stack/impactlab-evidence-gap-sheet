@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ImpactLab Evidence Gap Capture Sheet</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;color:#000;background:#faf8f6;line-height:1.45}
+.rail{height:10px;background:linear-gradient(to right,#EB001B 0 34%,#FF5F00 34% 67%,#F79E1B 67% 100%)}
+.wrap{max-width:1120px;margin:0 auto;padding:28px 20px 80px}
+header h1{font-size:30px;margin:22px 0 6px;line-height:1.15}
+header p.sub{font-size:16px;margin:0 0 4px;color:#333}
+.tabs{display:flex;gap:8px;margin:24px 0 20px;border-bottom:2px solid #e4ded8}
+.tab{appearance:none;border:0;background:none;font:inherit;font-size:16px;font-weight:700;padding:12px 18px;cursor:pointer;color:#666;border-bottom:4px solid transparent}
+.tab[aria-selected="true"]{color:#000;border-bottom-color:#FF5F00}
+.card{background:#fff;border:1px solid #e4ded8;border-radius:10px;padding:22px;margin-bottom:18px}
+.card h2{font-size:20px;margin:0 0 4px}
+.card .hint{font-size:14px;color:#666;margin:0 0 16px}
+.gap{border-left:8px solid #FF5F00}
+.gap:nth-of-type(odd){border-left-color:#EB001B}
+label{display:block;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin:14px 0 6px}
+label .q{display:block;font-weight:400;text-transform:none;letter-spacing:0;color:#666;font-size:13px;margin-top:2px}
+input[type=text],textarea,select{width:100%;font:inherit;font-size:16px;padding:10px 12px;border:1px solid #cfc8c1;border-radius:6px;background:#fff}
+textarea{min-height:76px;resize:vertical}
+input:focus,textarea:focus,select:focus{outline:3px solid #F79E1B;outline-offset:1px;border-color:#FF5F00}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:0 20px}
+.row{display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end}
+.row>div{flex:1;min-width:200px}
+.chk{display:flex;align-items:center;gap:9px;margin:14px 0 0;font-size:15px}
+.chk input{width:20px;height:20px;accent-color:#FF5F00}
+.prompt{background:#faf8f6;border:1px dashed #cfc8c1;border-radius:8px;padding:16px;margin-top:18px}
+.prompt p.lead{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin:0 0 10px;color:#FF5F00}
+.prompt .sentence{font-size:16px}
+.btn{appearance:none;border:0;font:inherit;font-size:16px;font-weight:700;padding:14px 26px;border-radius:7px;cursor:pointer;background:#000;color:#fff}
+.btn.alt{background:#fff;color:#000;border:2px solid #000}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.actions{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-top:8px}
+.note{font-size:14px;padding:12px 14px;border-radius:7px;margin:14px 0 0}
+.note.ok{background:#eaf6ee;border:1px solid #9ccfae}
+.note.warn{background:#fff4e5;border:1px solid #F79E1B}
+.note.err{background:#fdecee;border:1px solid #EB001B}
+table{width:100%;border-collapse:collapse;font-size:14px;margin-top:14px}
+th,td{border:1px solid #e4ded8;padding:9px 10px;text-align:left;vertical-align:top}
+th{background:#000;color:#fff;font-size:13px;text-transform:uppercase;letter-spacing:.5px}
+tbody tr:nth-child(even){background:#faf8f6}
+.scroll{overflow-x:auto}
+.count{font-size:15px;font-weight:700}
+.foot{font-size:13px;color:#666;margin-top:26px}
+@media(max-width:720px){.grid{grid-template-columns:1fr}header h1{font-size:24px}}
+</style>
+</head>
+<body>
+<div class="rail"></div>
+<div class="wrap">
+<header>
+<p class="sub" style="font-weight:700;color:#FF5F00;letter-spacing:2px;text-transform:uppercase;font-size:13px">FILMA &middot; ImpactLab Requirement Session</p>
+<h1>Evidence Gap Capture Sheet</h1>
+<p class="sub">Three evidence gaps per sheet. One sheet per table group.</p>
+</header>
+
+<div class="tabs" role="tablist">
+<button class="tab" id="tab-fill" role="tab" aria-selected="true" aria-controls="panel-fill">Fill the sheet</button>
+<button class="tab" id="tab-compile" role="tab" aria-selected="false" aria-controls="panel-compile">Compile submissions</button>
+</div>
+
+<section id="panel-fill" role="tabpanel" aria-labelledby="tab-fill">
+<div class="card">
+<h2>Your group</h2>
+<p class="hint">Name the table so the facilitators can trace the sheet back to you.</p>
+<div class="row">
+<div><label for="group">Table group<span class="q">e.g. Table 3, or the group name</span></label><input type="text" id="group" autocomplete="off"></div>
+<div><label for="members">Members or rapporteur<span class="q">Optional</span></label><input type="text" id="members" autocomplete="off"></div>
+</div>
+</div>
+
+<div id="gaps"></div>
+
+<div class="card">
+<div class="actions">
+<button class="btn" id="submit">Submit sheet</button>
+<button class="btn alt" id="csv">Download CSV</button>
+<button class="btn alt" id="copy">Copy as text</button>
+</div>
+<div id="status"></div>
+<p class="foot">Submit sends the sheet straight to the compile tab. If submitting does not work on your device, use Download CSV or Copy as text and send it to the facilitator.</p>
+</div>
+</section>
+
+<section id="panel-compile" role="tabpanel" aria-labelledby="tab-compile" hidden>
+<div class="card">
+<h2>All submitted gaps</h2>
+<p class="hint">Every sheet submitted, one row per evidence gap.</p>
+<div class="actions">
+<button class="btn alt" id="refresh">Refresh</button>
+<button class="btn alt" id="csvall">Download all as CSV</button>
+<span class="count" id="count"></span>
+</div>
+<div id="compileStatus"></div>
+<div class="scroll"><table id="out"><thead><tr>
+<th>Group</th><th>Gap</th><th>Morning input</th><th>Known evidence</th><th>Missing evidence</th><th>Who and context</th><th>Decision to inform</th><th>IP</th><th>Assumption?</th><th>Reporting sentence</th><th>Submitted</th>
+</tr></thead><tbody></tbody></table></div>
+</div>
+</section>
+</div>
+
+<script>
+var GAPS = 3;
+var COLS = [
+ ["known","Known evidence","Finding, source and main limitation"],
+ ["missing","Missing evidence","What we cannot yet explain or establish"],
+ ["who","Who and context","Affected group, location or delivery condition"],
+ ["decision","Decision to inform","What FILMA or an IP could change"]
+];
+var db = null, userId = null;
+
+function el(id){return document.getElementById(id)}
+function esc(s){var d=document.createElement("div");d.textContent=s==null?"":s;return d.innerHTML}
+
+function buildGaps(){
+  var host = el("gaps"), html = "";
+  for(var i=1;i<=GAPS;i++){
+    html += '<div class="card gap"><h2>Evidence gap '+i+'</h2>'
+      + '<p class="hint">Name the morning finding or implementation experience behind it. Where no supporting evidence has been identified, mark the point as an assumption to check.</p>'
+      + '<div class="row"><div><label for="input'+i+'">Morning input<span class="q">Which presentation or experience this came from</span></label>'
+      + '<select id="input'+i+'"><option value="">Select</option><option>Morning input 1</option><option>Morning input 2</option><option>Morning input 3</option><option>Morning input 4</option><option>Implementation experience</option></select></div>'
+      + '<div><label for="ip'+i+'">IP who could use the evidence<span class="q">Optional</span></label><input type="text" id="ip'+i+'" autocomplete="off"></div></div>'
+      + '<div class="grid">';
+    for(var c=0;c<COLS.length;c++){
+      var k=COLS[c];
+      html += '<div><label for="'+k[0]+i+'">'+k[1]+'<span class="q">'+k[2]+'</span></label><textarea id="'+k[0]+i+'"></textarea></div>';
+    }
+    html += '</div>'
+      + '<div class="chk"><input type="checkbox" id="assume'+i+'"><label for="assume'+i+'" style="margin:0;text-transform:none;letter-spacing:0;font-size:15px;font-weight:400">No supporting evidence identified &mdash; mark as an assumption to check</label></div>'
+      + '<div class="prompt"><p class="lead">Reporting prompt</p>'
+      + '<p class="sentence">&ldquo;We know or have observed <b id="p1-'+i+'">_____</b>. We still need to understand <b id="p2-'+i+'">_____</b> among <b id="p3-'+i+'">_____</b>. This evidence would help <b id="p4-'+i+'">_____</b> decide whether or how to <b id="p5-'+i+'">_____</b>.&rdquo;</p>'
+      + '</div></div>';
+  }
+  host.innerHTML = html;
+  for(var j=1;j<=GAPS;j++) wire(j);
+}
+
+function wire(i){
+  var map = [["p1-","known"],["p2-","missing"],["p3-","who"],["p4-","ip"],["p5-","decision"]];
+  function paint(){
+    for(var m=0;m<map.length;m++){
+      var src = el(map[m][1]+i), tgt = el(map[m][0]+i);
+      var v = src && src.value ? src.value.trim() : "";
+      tgt.textContent = v || "_____";
+      tgt.style.color = v ? "#000" : "#EB001B";
+    }
+    saveDraft();
+  }
+  ["known","missing","who","decision","ip"].forEach(function(k){ el(k+i).addEventListener("input", paint) });
+  el("input"+i).addEventListener("change", saveDraft);
+  el("assume"+i).addEventListener("change", saveDraft);
+  paint();
+}
+
+function collect(){
+  var rows = [], group = el("group").value.trim(), members = el("members").value.trim();
+  for(var i=1;i<=GAPS;i++){
+    var r = {
+      group: group, members: members, gap: i,
+      input: el("input"+i).value,
+      known: el("known"+i).value.trim(),
+      missing: el("missing"+i).value.trim(),
+      who: el("who"+i).value.trim(),
+      decision: el("decision"+i).value.trim(),
+      ip: el("ip"+i).value.trim(),
+      assumption: el("assume"+i).checked ? "Yes" : "No"
+    };
+    r.sentence = "We know or have observed " + (r.known||"_____") + ". We still need to understand " + (r.missing||"_____")
+      + " among " + (r.who||"_____") + ". This evidence would help " + (r.ip||"_____")
+      + " decide whether or how to " + (r.decision||"_____") + ".";
+    if(r.known||r.missing||r.who||r.decision) rows.push(r);
+  }
+  return {group:group, members:members, rows:rows};
+}
+
+function saveDraft(){
+  try{ localStorage.setItem("impactlab-draft", JSON.stringify(collect())) }catch(e){}
+}
+function loadDraft(){
+  try{
+    var raw = localStorage.getItem("impactlab-draft"); if(!raw) return;
+    var d = JSON.parse(raw);
+    el("group").value = d.group||""; el("members").value = d.members||"";
+    (d.rows||[]).forEach(function(r){
+      var i = r.gap; if(!el("known"+i)) return;
+      el("known"+i).value=r.known||""; el("missing"+i).value=r.missing||"";
+      el("who"+i).value=r.who||""; el("decision"+i).value=r.decision||"";
+      el("ip"+i).value=r.ip||""; el("input"+i).value=r.input||"";
+      el("assume"+i).checked = r.assumption==="Yes";
+    });
+    for(var i=1;i<=GAPS;i++){ el("known"+i).dispatchEvent(new Event("input")) }
+  }catch(e){}
+}
+
+function csvCell(v){ v = v==null?"":String(v); return '"'+v.replace(/"/g,'""')+'"' }
+function toCsv(rows){
+  var head = ["Group","Members","Gap","Morning input","Known evidence","Missing evidence","Who and context","Decision to inform","IP","Assumption to check","Reporting sentence","Submitted"];
+  var lines = [head.map(csvCell).join(",")];
+  rows.forEach(function(r){
+    lines.push([r.group,r.members,r.gap,r.input,r.known,r.missing,r.who,r.decision,r.ip,r.assumption,r.sentence,r.at||""].map(csvCell).join(","));
+  });
+  return lines.join("\r\n");
+}
+var saver = null;
+function download(name, text, host){
+  host = host || "status";
+  if(!saver){
+    // Outside Claude: plain browser download via a Blob link.
+    try{
+      var blob = new Blob(["﻿"+text], {type:"text/csv;charset=utf-8"});
+      var a = document.createElement("a");
+      a.href = URL.createObjectURL(blob); a.download = name;
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      setTimeout(function(){ URL.revokeObjectURL(a.href) }, 1000);
+      say(host,"ok","File saved. Send it to the facilitator.");
+    }catch(e){ say(host,"warn","Download was not completed. Use Copy as text instead.") }
+    return;
+  }
+  saver.save({filename:name, data:text}).then(function(){
+    say(host,"ok","File saved. Send it to the facilitator.");
+  }).catch(function(e){
+    say(host,"warn","Download was not completed. Use Copy as text instead.");
+  });
+}
+function say(host, cls, msg){ el(host).innerHTML = '<div class="note '+cls+'">'+msg+'</div>' }
+
+el("csv").addEventListener("click", function(){
+  var d = collect();
+  if(!d.rows.length){ say("status","warn","Fill at least one gap first."); return }
+  download("evidence-gaps-"+(d.group||"group").replace(/[^A-Za-z0-9]+/g,"-")+".csv", toCsv(d.rows), "status");
+});
+
+el("copy").addEventListener("click", function(){
+  var d = collect();
+  if(!d.rows.length){ say("status","warn","Fill at least one gap first."); return }
+  var txt = "Evidence Gap Capture Sheet — " + (d.group||"Unnamed group") + "\n\n";
+  d.rows.forEach(function(r){
+    txt += "Gap "+r.gap+(r.input?" ("+r.input+")":"")+"\n"
+      + "Known evidence: "+r.known+"\nMissing evidence: "+r.missing+"\nWho and context: "+r.who+"\nDecision to inform: "+r.decision+"\n"
+      + (r.ip?"IP: "+r.ip+"\n":"") + (r.assumption==="Yes"?"Assumption to check: Yes\n":"")
+      + "Reporting prompt: "+r.sentence+"\n\n";
+  });
+  function done(){ say("status","ok","Copied. Paste it into WhatsApp or email for the facilitator.") }
+  if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(txt).then(done, fallback) } else { fallback() }
+  function fallback(){
+    var t=document.createElement("textarea"); t.value=txt; document.body.appendChild(t); t.select();
+    try{ document.execCommand("copy"); done() }catch(e){ say("status","err","Copy blocked on this device. Use Download CSV instead.") }
+    document.body.removeChild(t);
+  }
+});
+
+el("submit").addEventListener("click", function(){
+  var d = collect();
+  if(!d.group){ say("status","warn","Name your table group before submitting."); return }
+  if(!d.rows.length){ say("status","warn","Fill at least one gap before submitting."); return }
+  if(!db){ say("status","warn","Submitting is not available on this device, most likely because you are not signed in. Use Download CSV or Copy as text and send it to the facilitator."); return }
+  el("submit").disabled = true;
+  say("status","warn","Submitting&hellip;");
+  var at = new Date().toISOString();
+  var key = at.replace(/[^0-9]/g,"") + "-" + d.group.replace(/[^A-Za-z0-9]+/g,"-").slice(0,24).toLowerCase();
+  d.rows.forEach(function(r){ r.at = at });
+  db.doc("submissions/"+key).set({group:d.group, members:d.members, at:at, rows:d.rows})
+    .then(function(){
+      say("status","ok","Submitted. Your sheet is in the compile tab.");
+      el("submit").disabled = false;
+    })
+    .catch(function(e){
+      say("status","err","Could not submit ("+(e && e.message ? e.message : "unknown error")+"). Use Download CSV or Copy as text instead.");
+      el("submit").disabled = false;
+    });
+});
+
+var allRows = [];
+function renderCompile(docs){
+  allRows = [];
+  docs.forEach(function(doc){
+    var data = doc.data || doc;
+    (data.rows||[]).forEach(function(r){
+      allRows.push({group:data.group||r.group||"", members:data.members||"", gap:r.gap, input:r.input||"",
+        known:r.known||"", missing:r.missing||"", who:r.who||"", decision:r.decision||"", ip:r.ip||"",
+        assumption:r.assumption||"No", sentence:r.sentence||"", at:data.at||r.at||""});
+    });
+  });
+  allRows.sort(function(a,b){ return String(a.at).localeCompare(String(b.at)) || a.gap-b.gap });
+  var body = document.querySelector("#out tbody"), html = "";
+  allRows.forEach(function(r){
+    html += "<tr><td>"+esc(r.group)+"</td><td>"+esc(r.gap)+"</td><td>"+esc(r.input)+"</td><td>"+esc(r.known)+"</td><td>"+esc(r.missing)
+      +"</td><td>"+esc(r.who)+"</td><td>"+esc(r.decision)+"</td><td>"+esc(r.ip)+"</td><td>"+esc(r.assumption)+"</td><td>"+esc(r.sentence)
+      +"</td><td>"+esc((r.at||"").slice(0,16).replace("T"," "))+"</td></tr>";
+  });
+  body.innerHTML = html || '<tr><td colspan="11">No sheets submitted yet.</td></tr>';
+  el("count").textContent = allRows.length ? allRows.length + " gaps from " + new Set(allRows.map(function(r){return r.group})).size + " groups" : "";
+}
+
+function loadCompile(){
+  if(!db){ say("compileStatus","warn","Submitted sheets cannot be read on this device, most likely because you are not signed in."); return }
+  say("compileStatus","warn","Loading&hellip;");
+  db.collection("submissions").get().then(function(docs){
+    el("compileStatus").innerHTML = "";
+    renderCompile(docs || []);
+  }).catch(function(e){
+    say("compileStatus","err","Could not load submissions ("+(e && e.message ? e.message : "unknown error")+").");
+  });
+}
+el("refresh").addEventListener("click", loadCompile);
+el("csvall").addEventListener("click", function(){
+  if(!allRows.length){ say("compileStatus","warn","Nothing to export yet."); return }
+  download("impactlab-evidence-gaps-all.csv", toCsv(allRows), "compileStatus");
+});
+
+var tabs = [["tab-fill","panel-fill"],["tab-compile","panel-compile"]];
+tabs.forEach(function(t){
+  el(t[0]).addEventListener("click", function(){
+    tabs.forEach(function(x){
+      var on = x[0]===t[0];
+      el(x[0]).setAttribute("aria-selected", on ? "true" : "false");
+      el(x[1]).hidden = !on;
+    });
+    if(t[0]==="tab-compile") loadCompile();
+  });
+});
+
+buildGaps();
+loadDraft();
+
+(async function(){
+  try{
+    if(window.claude && window.claude.use){
+      db = await window.claude.use("db");
+      saver = await window.claude.use("downloads");
+    }
+  }catch(e){}
+  if(!db){
+    say("status","warn","Submitting needs you to be signed in on this device. If Submit does not work, use Copy as text and send the sheet to the facilitator.");
+  }
+})();
+</script>
+</body>
+</html>
